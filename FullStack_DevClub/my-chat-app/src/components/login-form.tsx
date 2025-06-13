@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useState } from "react"
 
 export function LoginForm({
@@ -19,7 +19,6 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const navigate = useNavigate();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -36,9 +35,7 @@ export function LoginForm({
           const error = await res.text();
           throw new Error(error || "Login failed");
         }
-        // Use React Router navigation instead of full page reload
-        // Set a state to trigger navigation
-        navigate('/login', { replace: true });
+        window.location.href = "/";
       })
       .catch((err) => {
         // handle error, e.g., show error message
