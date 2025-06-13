@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const middleware = require('./src/middlewares/middleware'); // Assuming you have some middleware to use
 
 const { User, userJoiSchema } = require('./src/models/user'); // Importing User model and Joi schema
@@ -24,6 +25,10 @@ mongoose.connect(process.env.MONGO_URI, {
 
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(cookieParser());
+app.use(cors({
+  origin: process.env.CLIENT_URL, // Replace with your client URL
+  credentials: true, // Allow cookies to be sent
+})); // Middleware for CORS
 app.use(middleware);
 
 app.get('/', (req, res) => {

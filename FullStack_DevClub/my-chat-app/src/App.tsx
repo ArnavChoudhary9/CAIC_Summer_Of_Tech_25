@@ -1,14 +1,29 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-import Home from './pages/Home';
+//  Hooks
+import { UserProvider } from '@/hooks/use-user';
+import { ThemeProvider } from '@/hooks/use-theme';
+
+//  Pages
+import Home from '@/pages/Home';
+import NotFound from '@/pages/NotFound';
+import Login from '@/pages/Login';  
+import Logout from '@/pages/Logout';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </Router>
+    <UserProvider>
+      <ThemeProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </UserProvider>
   );
 }
 
