@@ -1,44 +1,57 @@
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { SubmitButton } from "../components/submit-button";
+import { AppSidebar } from "@/components/app-sidebar"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
-function Home() {
+export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-
-      <form className="flex flex-col w-full max-w-96 sm:min-w-96 sm:max-w-96 mx-auto">
-        <h1 className="text-2xl font-medium">Sign in</h1>
-        <p className="text-sm text-foreground">
-          Don't have an account?{" "}
-          <a className="text-foreground font-medium underline" href="/sign-up">
-            Sign up
-          </a>
-        </p>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="username">Username</Label>
-          <Input name="username" placeholder="yourusername" required />
-          <div className="flex justify-between items-center">
-            <Label htmlFor="password">Password</Label>
-            <a
-              className="text-xs text-foreground underline"
-              href="/forgot-password"
-            >
-              Forgot Password?
-            </a>
-          </div>
-          <Input
-            type="password"
-            name="password"
-            placeholder="Your password"
-            required
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "350px",
+        } as React.CSSProperties
+      }
+    >
+      <AppSidebar />
+      <SidebarInset>
+        <header className="bg-background sticky top-0 flex shrink-0 items-center gap-2 border-b p-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 data-[orientation=vertical]:h-4"
           />
-          <SubmitButton pendingText="Signing In...">
-            Sign in
-          </SubmitButton>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="#">All Inboxes</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Inbox</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          {Array.from({ length: 24 }).map((_, index) => (
+            <div
+              key={index}
+              className="bg-muted/50 aspect-video h-12 w-full rounded-lg"
+            />
+          ))}
         </div>
-      </form>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
-
-export default Home;
