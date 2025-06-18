@@ -10,38 +10,62 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import { Link } from "react-router-dom"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useUser } from "@/hooks/use-user"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const error = await res.text();
-          throw new Error(error || "Login failed");
-        }
-        window.location.href = "/";
-      })
-      .catch((err) => {
-        // handle error, e.g., show error message
-        console.error(err);
-      });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+
+  const { user } = useUser();
+  
+  if (user) {
+    // If user is already logged in, redirect to home
+    navigate("/", { replace: true });
+    return null; // Prevent rendering the form
   }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      setError(null); // Reset error state
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      if (res.ok) {
+        navigate("/", { replace: true });
+      } else {
+        // Handle login error
+        const data = await res.json();
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -60,22 +84,14 @@ export function LoginForm({
                 <Input
                   id="username"
                   type="text"
+                  placeholder="m@example.com"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
               <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                    to="/forgot-password"
-                    aria-label="Forgot your password?"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -85,16 +101,21 @@ export function LoginForm({
                 />
               </div>
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full">
-                  Login
+                {error && (
+                  <div className="text-red-500 text-sm">
+                    {error}
+                  </div>
+                )}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </div>
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Link to="/sign-up" className="underline underline-offset-4">
+              <a href="#" className="underline underline-offset-4">
                 Sign up
-              </Link>
+              </a>
             </div>
           </form>
         </CardContent>

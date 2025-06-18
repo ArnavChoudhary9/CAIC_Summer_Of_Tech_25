@@ -20,10 +20,13 @@ import {
 } from "@/components/ui/sidebar"
 import { Switch } from "@/components/ui/switch"
 
-import { useUser } from "@/hooks/use-user"
-
 // This is sample data
 const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
   navMain: [
     {
       title: "Inbox",
@@ -146,7 +149,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [activeItem, setActiveItem] = React.useState(data.navMain[0])
   const [mails, setMails] = React.useState(data.mails)
   const { setOpen } = useSidebar()
-  const { user } = useUser();
 
   return (
     <Sidebar
@@ -213,7 +215,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={user ?? { username: "Guest", email: "guest@example.com" }} />
+          <NavUser user={data.user} />
         </SidebarFooter>
       </Sidebar>
 

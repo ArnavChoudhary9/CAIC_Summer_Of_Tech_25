@@ -13,21 +13,23 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Switch } from "@/components/ui/switch"
-import { Navigate } from "react-router-dom";
 
+import { ThemeSwitcher } from "@/components/ThemeSwitcher"
+import { Navigate } from "react-router-dom"
 import { useUser } from "@/hooks/use-user"
-import { useTheme } from "@/hooks/use-theme"
 
 export default function Home() {
   const { user, loading } = useUser();
-  const { isDark, setIsDark } = useTheme();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    );
   }
 
-  if (user === null) {
+  if (!loading && user === null) {
     return <Navigate to="/login" replace />;
   }
 
@@ -58,11 +60,9 @@ export default function Home() {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <Switch
-            className="ml-auto shadow-none flex items-center gap-2"
-            checked={isDark}
-            onCheckedChange={setIsDark}
-          />
+          <div className="ml-auto flex items-center">
+            <ThemeSwitcher />
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
           {Array.from({ length: 24 }).map((_, index) => (

@@ -7,6 +7,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
+    /* Module resolution */
     "baseUrl": ".",
     "paths": {
       "@/*": [
