@@ -26,7 +26,7 @@ export function LoginForm({
 
   const navigate = useNavigate();
 
-  const { user } = useUser();
+  const { user, updateUser } = useUser();
   
   if (user) {
     // If user is already logged in, redirect to home
@@ -53,6 +53,7 @@ export function LoginForm({
       });
 
       if (res.ok) {
+        updateUser();
         navigate("/", { replace: true });
       } else {
         // Handle login error

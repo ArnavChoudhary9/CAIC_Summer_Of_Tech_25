@@ -15,6 +15,7 @@ export interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   loading: boolean;
+  updateUser: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -43,16 +44,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const updateUser = async () => {
+    setLoading(true);
+    setUser(await fetchProfile());
+    setLoading(false);
+  };
+
   useEffect(() => {
-    (async () => {
-      setUser(await fetchProfile());
-      setLoading(false);
-    })();
+    updateUser();
   }, []);
 
   return createElement(
     UserContext.Provider,
-    { value: { user, setUser, loading } },
+    { value: { user, setUser, loading, updateUser } },
     children
   );
 }

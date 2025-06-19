@@ -29,7 +29,7 @@ export default function Home() {
     );
   }
 
-  if (!loading && user === null) {
+  if (user === null) {
     return <Navigate to="/login" replace />;
   }
 
