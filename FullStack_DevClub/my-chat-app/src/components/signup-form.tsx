@@ -15,11 +15,12 @@ import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { useUser } from "@/hooks/use-user"
 
-export function LoginForm({
+export default function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +29,7 @@ export function LoginForm({
   const navigate = useNavigate();
 
   const { user, updateUser } = useUser();
-  
+
   if (user) {
     // If user is already logged in, redirect to home
     navigate("/", { replace: true });
@@ -41,7 +42,7 @@ export function LoginForm({
 
     try {
       setError(null); // Reset error state
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -49,20 +50,21 @@ export function LoginForm({
         },
         body: JSON.stringify({
           username,
+          email,
           password,
         }),
       });
 
       if (res.ok) {
         updateUser();
-        navigate("/", { replace: true });
+        navigate("/login", { replace: true });
       } else {
-        // Handle login error
+        // Handle sign up error
         const data = await res.json();
-        setError(data.message || "Login failed");
+        setError(data.message || "Sign up failed");
       }
     } catch (err) {
-      console.error("Login error:", err);
+      console.error("Sign up error:", err);
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
@@ -92,6 +94,17 @@ export function LoginForm({
                 />
               </div>
               <div className="grid gap-3">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="text"
+                  placeholder="m@example.com"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-3">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -108,14 +121,14 @@ export function LoginForm({
                   </div>
                 )}
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Logging in..." : "Login"}
+                  {isLoading ? "Signing up..." : "Sign up"}
                 </Button>
               </div>
             </div>
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link to="/signup" className="underline underline-offset-4">
-                Sign up
+              Already have an account?{" "}
+              <Link to="/login" className="underline underline-offset-4">
+                Log in
               </Link>
             </div>
           </form>
